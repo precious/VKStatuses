@@ -1,0 +1,8 @@
+{% if contact_list %}
+	<li class = "item">  Все  </li>
+	{% for contact in contact_list %}
+	<li class = "item"> {{ contact.name|safe }} <span> {{ contact.uid }} </span> </li>
+	{% endfor %}
+{% else %}
+	<p> No contacts </p>
+{% endif %}

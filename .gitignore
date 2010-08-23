@@ -1,0 +1,6 @@
+*.pyc
+todolist
+changes
+what.html
+*.sqlite
+robot/libstatuses.py

@@ -1,0 +1,55 @@
+<!--﻿<!DOCTYPE html>-->
+<!--<html xmlns="http://www.w3.org/1999/xhtml">-->
+<!--<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">-->
+<!--<html xmlns="http://www.w3.org/1999/xhtml">-->
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<title>VKStatuses</title>
+	<meta name="title" content="" />
+	<meta name="keywords" content="" />
+	<meta name="description" content="" />
+	<script src="http://localhost/res/default/js/right.js"></script>	
+	<link rel="stylesheet" href="http://localhost/res/default/css/comments.css"  type="text/css" />
+
+	
+</head>
+
+<body>
+	
+	<div class="stat">
+		<a href="http://vkontakte.ru/{{contact.uid}}">{{contact.name|safe}}</a>
+		<span>{{status.date}}</span>
+		<br>
+		{{status.text|safe}}
+	</div>
+	
+	<div class="send_comment_form">
+    <form id="send_comment_form" action="/statuses/send_comment/" method="post">
+    	<div class="email">e-mail: <input id="email"  name="email" type="text"></div>
+		<textarea id="comment_text" class="comment_text" name="comment_text" rows="5"></textarea><br>
+		<input type="hidden" name="status_id" value="{{stat_id}}">
+        <input type="submit" value="send">
+        <span class='msg' id='msg'>{%if msg%}{{msg}}{%endif%}</span>
+    </form>
+    </div>
+    
+    
+    <br><br>
+    	<div id="comments" class="comments">
+    {%for comment in comments%}
+    	<div id="comment" class="comment"><span id="datetime">{% ifequal comment.date.day now.day %} сегодня,
+						{% else %} {% ifequal comment.date.day yesterday %}	вчера,
+						{% else %} {{ comment.date|date:"d-m" }}
+						{% endifequal %} {% endifequal %} 
+						{{ comment.date|date:"H:i" }}</span>
+						{{comment.text|safe}}
+		</div>
+    {%endfor%}
+    	</div>
+	
+
+</body>
+</html>
+

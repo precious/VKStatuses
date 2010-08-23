@@ -1,0 +1,24 @@
+General Information
+===================
+This is vkstatuses python script. It allows you to parse newsfeed from the social network vkontakte.ru using your login information
+
+Using download.py
+===================
+Just edit download.py with your email and password. Then type 
+
+	python download.py
+
+or put it in a file
+
+	python download.py > outfile.html
+
+and you are done.
+
+Using libstatuses.py
+===================
+This is small code to interact with database via Django models
+Import this library in your python code e.g.
+
+	import libstatuses
+
+IMORTANT:In order ot use it, you must have this script in the same directory as settings.py (or at simply link it to achieve the same result)

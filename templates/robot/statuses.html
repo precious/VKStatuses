@@ -1,0 +1,324 @@
+{% extends "robot/vkstatuses.html" %}
+
+{% block title %}VKStatuses{% endblock %}
+
+{% block includes %}
+	<script src="http://localhost/res/default/js/right.js"></script>
+	<script src="http://localhost/res/default/js/right-selectable.js"></script>
+	<link rel="stylesheet" href="http://localhost/res/default/css/style.css"  type="text/css" />
+{% endblock %}
+
+{% block header %}
+
+<!--<script>-->
+<!--function selectCode(f){-->
+<!--document.forms[f].elements[0].focus();-->
+<!--document.forms[f].elements[0].select();-->
+<!--}-->
+<!--function changeScrollbarColor(C){-->
+<!--  if (document.all){-->
+<!--    document.body.style.scrollbarBaseColor = C-->
+<!--  }   -->
+<!--}-->
+<!--</script>-->
+
+
+<div class = "header">
+<div style="color: #2B587A; padding: 7px">
+	all statuses: {{number_of_statuses}} 
+	| <a href="javascript: requestCommentedStatusesList(30, [], '');">Last Commented</a>
+	| <a href="javascript: requestStatusList(30, [], '');">Last Statuses</a>
+		
+</div>
+<!--	<h1>VKStatuses</h1>-->
+</div>
+{% endblock %}
+
+{% block body %}
+<div id = "main"> 
+	<div class = "content">
+		<div class = "statuses_holder">
+			<div class = "coloumn">
+<!--				<input type = "text" value = "Поиск по статусам" id = "search_statuses">-->
+				<input type = "text" value = "" id = "search_statuses">
+				<span><img src = "http://localhost/res/default/img/icons/clear.png"></span>		
+			</div>
+			<div class = "statuses" id = "status_list">
+				<div id = "first_status">  </div>
+				<div id = "last_status">  </div>
+			</div>
+		</div>
+
+		<div class = "tags_holder">
+			<div class = "coloumn">
+				<b>Ключевые слова</b>
+			</div>
+			<div class = "tags" id = "tags_list">
+				<li class = "item"> Все </li>
+				<li class = "item selected"> #love </li>
+				<li class = "item"> #hate </li>
+				<li class = "item selected"> #life </li>
+				<li class = "item"> #death </li>
+			</div>
+		</div>
+
+		<div class = "contacts_holder">
+			<div class = "coloumn">
+				<input type = "text" value = "Поиск по имени" id = "search_contacts"> 
+				<span><img src = "http://localhost/res/default/img/icons/clear.png"></span>
+			</div>
+			<div class = "contacts" id = "contacts_list">
+				<div id = "first_contact">  </div>
+
+			</div>
+		
+		</div>
+	</div>
+
+<script>
+
+//STARTUP TIMERS
+debugmode = 0;
+function dbg(str)
+{
+	//if (debugmode == 1)	dbg(str);
+}
+timer = new Object();
+function timedSearch(timerVar) 
+{
+	timer.stat = -1;
+	setInterval
+	( function () 
+		{
+			if (timer.stat >= 0) timer.stat++;
+			if (timer.stat >= 5) { timer.stat = -1; 
+			searchStatusText(contacts.getValue() , $('search_statuses').value); 
+			} 
+		} , 100
+	);
+	timer.cont = -1;
+	setInterval
+	( function () 
+		{
+			if (timer.cont >= 0) timer.cont++;
+			if (timer.cont >= 5) { timer.cont = -1; 
+			searchContactName(''); 
+			} 
+		} , 100
+	);
+}
+timedSearch();
+//timedSearch(timer.cont);
+
+//INTERFACE
+	//INPUTS
+function makeNiceInput(id, text)
+{
+	$(id).value = text;
+	$(id).defaultValue = text;
+	$(id).onFocus ( function () { if (this.value == text){ this.value = '';} }  );
+	$(id).onBlur ( function () { if (this.value == '') { this.value = text;} } );
+	//$(id).onKeyup ( function() { k = 0;} );
+	//$(id).onFocus ( function () {  dbg('focused');  }  );
+}
+makeNiceInput('search_statuses', 'Поиск по статусам');
+$('search_statuses').onKeyup ( function() { timer.stat = 0;} );
+$('search_statuses').next().onClick
+(
+    function ()
+    {
+        this.prev().value = '';
+        searchStatusText(contacts.getValue(), $('search_statuses').value);
+        //this.prev().value = this.prev().defaultValue;
+        this.prev().fire('blur');
+    }
+)
+makeNiceInput('search_contacts', 'Поиск по имени');
+$('search_contacts').onKeyup ( function() { timer.cont = 0;} );
+$('search_contacts').next().onClick
+(
+    function ()
+    {
+        this.prev().value = '';
+        searchContactName('');
+        //this.prev().value = this.prev().defaultValue;
+        this.prev().fire('blur');
+    }
+)
+
+//timer = window.setTimeout(searchStatus, 1000);
+function searchStatusText(contacts, text)
+{
+	var effect  = 'fade';
+	var effect2 = 'slide';
+	var effect3 = '';
+	//dbg('start searching statuses');
+	searchRegExp = new RegExp($('search_statuses').value , 'i');
+	//dbg('regexp = ' + searchRegExp );
+	for (current = $$('div.status').first();
+		( current != $$('div.status').last() )
+		||(current == $$('div.status').last())
+		;
+		 current = current.next() )
+	{
+		text = current.innerHTML.match(/\/span>((.+)|(\s+))+$/);
+		if (text != null) { text = text[0] } else {break;}
+		text = text.replace(/\/span>\s+/, '').replace(/\s+$/, '');
+		//dbg('uid');
+		uid = current.select('a')[0].get('href');
+		uid = uid.match(/vkontakte\.ru\/.+/)[0].replace(/vkontakte\.ru\//, '').replace(/\s+/g, '');
+		//dbg ('\tcheck status uid: ' + uid);
+		show = 0;
+		if (contacts[0] != 0)
+		{
+			//dbg('\tnot all contacts')
+			for (var i = 0; i < contacts.length; i++)
+			{
+				//dbg('i = ' + i + '    ' + 'dict[i] = ' + dict[i]);
+				selected = $$('div.contacts')[0].subNodes()[contacts[i]+1].select('span')[0].innerHTML.replace(/\s+/g, '');
+				if (uid == selected) {show = 1; dbg('\t i= '+i +'uid = ' + uid + ' is selected: ' + selected)}
+				//dbg(uid);
+			}
+		}
+		else {show = 1;}
+		//dbg('\tshow = ' + show);
+		matched = text.search( searchRegExp );
+		//dbg('\tmatched = ' + matched);
+		if ( 
+			(matched != -1)  &&  (show == 1)
+			)
+		{		
+			if (current.hidden())  { current.show(effect); } 
+			//dbg(text + '; showing');
+		}
+		else
+		{
+			if (current.visible()) { current.hide(effect3); }
+			//dbg(text + '; hiding');
+		}
+		//dbg('\n');
+	}
+}
+function searchContactName(effect)
+{
+	dbg('start searching contacts');
+	searchRegExp = new RegExp($('search_contacts').value , 'i');
+	dbg('regexp = ' + searchRegExp );
+	for (var current = $$('div.contacts')[0].subNodes().first().next().next(); 
+	(current != $$('div.contacts')[0].subNodes().last() )
+	|| (current == $$('div.contacts')[0].subNodes().last())
+	; 
+	current = current.next())
+	{	
+		if (current == undefined) {break;}
+		if ( current.innerHTML != null){
+		contactName = current.innerHTML.match(/((.+)(\s+))+<span/)[1].replace(/\s/, ''); }
+		else { break; }
+		//dbg('name = ' + contactName );
+		//contactID = current.innerHTML.match(/span>((.+)(\s+))+<\/span/) [1].replace(/\s+/g, '');
+		if ( contactName.search( searchRegExp ) == -1 )
+		{		
+			if (current.visible()) { current.hide(effect); } 
+			//dbg(current.parent() + '; HIDING');
+		}
+		else
+		{
+			if (current.hidden()) { current.show(effect); } 
+			//dbg(current.innerHTML + ' <- parent; SHOWING');
+		}
+	}
+	
+	//for (current = $$('div.contacts > div.item').first();
+	//	(current != $$('div.status').last()) || (current == $$('div.status').last());
+	//	 current = current.next() )
+	//{
+
+}
+
+	//SELECTABLE
+function setSelectables() 
+{
+	tags = new Selectable('tags_list', {  });
+	//dbg($('contacts_list').innerHTML);
+	contacts = new Selectable('contacts_list', {  });
+	contacts.select(0);
+	tags.select(0);
+	function values() 
+		{
+			selected = this.getValue();
+			if (selected[0] == 0) {
+				dbg('all and ' + selected );
+				if ( $('search_statuses').value  == $('search_statuses').defaultValue )
+					$('search_statuses').value = '';
+				searchStatusText([0] , $('search_statuses').value);
+			} else {
+				dbg('not all and ' + selected);
+				if ( $('search_statuses').value  == $('search_statuses').defaultValue )
+					$('search_statuses').value = '';
+				searchStatusText(contacts.getValue() , $('search_statuses').value);
+			}
+			return this.getValue();
+		};
+	contacts.on('change', values );
+}
+
+//XHR
+function requestStatusList(number, contacts, text ){
+	Xhr.load('/xhr/last' + number + 's/', 
+		{
+			onSuccess: function () { 
+			$$("div.status").each('remove');
+			$('first_status').insert(this.text, 'after').show('slide'); 
+			},
+			onFailure: function () {  
+			//dbg('ERROR XHR loading; 404?'); 
+			}
+		}
+		); }
+requestStatusList(30, [], '');
+
+function requestCommentedStatusesList(number, contacts, text ){
+	Xhr.load('/xhr/last' + number + 'commented/', 
+		{
+			onSuccess: function () {
+			$$("div.status").each('remove');
+			$('first_status').insert(this.text, 'after').show('slide'); 
+			},
+			onFailure: function () {  
+			//dbg('ERROR XHR loading; 404?'); 
+			}
+		}
+		); }
+
+function requestContactList(){
+	Xhr.load('/xhr/contacts/', 
+		{
+			onSuccess: function () { 
+			$('first_contact').insert(this.text, 'after'); 
+			setSelectables();
+			//dbg('contacts loaded' + $('contacts_list').innerHTML);
+			},
+			onFailure: function () {  
+			//dbg('ERROR XHR loading; 404?'); 
+			}
+		}
+		); 
+	
+		}
+requestContactList();
+
+//INTERFACE DURTY HACKS
+window.on('resize', function () {
+//$('search_statuses').setWidth($('search_statuses').parent().dimensions().width - 24);
+//$('search_contacts').setWidth($('search_contacts').parent().dimensions().width - 24);
+});
+//$('search_statuses').setWidth($('search_statuses').parent().dimensions().width - 24);
+//$('search_contacts').setWidth($('search_contacts').parent().dimensions().width - 24);
+//window.fire('resize');
+	
+</script>
+
+<!--<div class = "footer">-->
+<!--	footer-->
+<!--</div>-->
+{% endblock %}

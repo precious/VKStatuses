@@ -1,0 +1,135 @@
+<!--﻿<!DOCTYPE html>-->
+<!--<html xmlns="http://www.w3.org/1999/xhtml">-->
+<!--<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">-->
+<!--<html xmlns="http://www.w3.org/1999/xhtml">-->
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<title>VKStatuses</title>
+	<meta name="title" content="" />
+	<meta name="keywords" content="" />
+	<meta name="description" content="" />
+	<script src="http://localhost/res/default/js/right.js"></script>	
+	<link rel="stylesheet" href="http://localhost/res/default/css/comments.css"  type="text/css" />
+
+	
+	<script>
+	function add_zero(number)
+	{
+		if  (number >=0 && number < 10)
+			return '0' + number;
+		return String(number);
+	}
+	
+	function send_comment(form_id)
+	{
+		comment = $("comment_text").value;
+		if (comment.search(/^[\s\n]*$/) != -1)
+		{
+			$('msg').update('');
+			return;
+		}
+
+		if ($("email").value.search(/^[\w.]+@[\w.]+\.\w+$/) == -1)
+		{
+			$('msg').update('wrong e-mail');
+			return;
+		}		
+
+		$(form_id).send(
+			{
+				onSuccess: function()
+				{
+					$("comment_text").value = "";
+					$("email").value = "";
+					$('msg').update('');
+					add_comment(comment);
+					window.scrollTo( $$('div.comment').last());
+				},
+				onFailure: function()
+				{
+					$('msg').update('failure');
+				}
+			}
+			);
+	}
+	
+	function add_comment(text)
+	{
+		date = new Date();
+		month = add_zero(date.getMonth() + 1);
+		day = add_zero(date.getDate());
+		hours = add_zero(date.getHours());
+		minutes = add_zero(date.getMinutes());
+		var new_stat_date = new Element('span').update(day + '-' + month + ' ' + hours + ':' + minutes + ' ');
+		
+		text = text.replace(/>/g,'&gt;').replace(/</g,'&lt;');
+		text = text.replace(/\[img\](.*?)\[\/img\]/g,'<img src="$1">').replace(/\[url=(.*?)\](.*?)\[\/url\]/g,'<a href="$1">$2</a>');
+		text = text.replace(/\n/g,'<br>');
+
+		var new_stat = new Element('div', {class:'comment'}).update(text);
+		new_stat_date.insertTo(new_stat,'top');
+		new_stat.insertTo($("comments"));
+		
+	}
+	
+	function add_bbcode(textarea,type)
+	{
+		val = textarea.value
+		start = textarea.selectionStart
+		end = textarea.selectionEnd
+		switch(type)
+		{
+			case 'url':
+				textarea.value = val.substring(0,start) + '[url=]' + val.substring(start,end) + '[/url]' + val.substring(end);
+				break;
+			case 'img':
+				textarea.value = val.substring(0,start) + '[img]' + val.substring(start,end) + '[/img]' + val.substring(end);
+				break;		
+		}
+		
+	}
+	
+	</script>
+</head>
+
+<body>
+	
+	<div class="stat">
+		<a href="http://vkontakte.ru/{{contact.uid}}">{{contact.name|safe}}</a>
+		<span>{{status.date}}</span>
+		<br>
+		{{status.text|safe}}
+	</div>
+	
+	<div class="send_comment_form">
+    <form id="send_comment_form" action="/statuses/send_comment/" method="post">
+    	<div class="email">e-mail: <input id="email"  name="email" type="text"></div>
+		<textarea id="comment_text" class="comment_text" name="comment_text" rows="5"></textarea><br>
+		<input type="hidden" name="status_id" value="{{stat_id}}">
+        <a class='button' href="javascript: send_comment('send_comment_form');">send</a>
+        <a class='button' href="javascript: add_bbcode($('comment_text'),'url');">url</a>
+        <a class='button' href="javascript: add_bbcode($('comment_text'),'img');">img</a>
+        <span class='msg' id='msg'>{%if msg%}{{msg}}{%endif%}</span>
+    </form>
+    </div>
+    
+    
+    <br><br>
+    	<div id="comments" class="comments">
+    {%for comment in comments%}
+    	<div class="comment"><span>{% ifequal comment.date.day now.day %} сегодня,
+						{% else %} {% ifequal comment.date.day yesterday %}	вчера,
+						{% else %} {{ comment.date|date:"d-m" }}
+						{% endifequal %} {% endifequal %} 
+						{{ comment.date|date:"H:i" }}</span>
+						{{comment.text|safe}}
+		</div>
+    {%endfor%}
+    	</div>
+	
+
+</body>
+</html>
+

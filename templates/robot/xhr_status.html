@@ -1,0 +1,20 @@
+{% if status %}
+	<div class = "status"> 
+	<a href="http://vkontakte.ru/{{ status.contact.uid }}">{{ status.contact.name|safe }}</a>
+		<span> 
+		{% ifequal status.date.day now.day %}
+			сегодня,
+		{% else %}
+			{% ifequal status.date.day yesterday %}
+				вчера,
+			{% else %}
+				{{ status.date|date:"d-m" }}
+			{% endifequal %}
+		{% endifequal %} 
+		{{ status.date|date:"H:i" }}
+		 </span>
+		{{ status.text|safe }}
+	</div>
+{% else %}
+	<p> None </p>
+{% endif %}
