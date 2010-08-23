@@ -32,14 +32,11 @@ def index(request):
 	
 
 def statuses(request):
-	if not is_mobile_browser(request):
-		return render_to_response ('robot/statuses.html',
+	return render_to_response ('robot/statuses.html',
 			{'now' : datetime.datetime.now(),
 			'yesterday' : datetime.datetime.now().day-1,
 			'number_of_statuses' : len(Status.objects.all()),
 			})
-	else:
-		return index(request)
 
 
 def lastrecords(request, records):

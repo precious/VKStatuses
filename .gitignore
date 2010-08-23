@@ -1,7 +1,7 @@
 *.pyc
-todolist
-changes
-what.html
+rpk082/todolist
+rpk082/changes
+rpk082/what.html
 *.sqlite
-robot/libstatuses.py
-profiles
+rpk082/robot/libstatuses.py
+rpk082/profiles

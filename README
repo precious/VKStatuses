@@ -4,7 +4,9 @@ This is vkstatuses django project. It allows you to parse newsfeed from the soci
 
 How to run vkstatuses project
 =============================
-1. Run script start.sh and follow the instructions.
-2. Add to database your vk profile(s). Use the profiles.py (type python profiles.py --help for information about usage).
-3. Run script syncstatuses.py for populating database. To ensure regular parsing and adding statuses to database add syncstatuses.py script to Cron's list using crontab (type crontab -e).
-4. Run django project!
+1. Move to your project directory (cd rpk082).
+2. Run script start.sh and follow the instructions.
+3. Add to database your vk profile(s). Use the profiles.py script (type python profiles.py --help for information about usage).
+4. Set English language in the settings of your vk page.
+5. Run script syncstatuses.py for populating database. To ensure regular parsing and adding statuses to database add syncstatuses.py script to Cron's list using crontab (type crontab -e).
+6. Run django project!

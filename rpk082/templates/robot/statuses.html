@@ -270,6 +270,7 @@ function requestStatusList(number, contacts, text ){
 			$$("div.status").each('remove');
 			$('first_status').insert(this.text, 'after').show('slide'); 
 			},
+
 			onFailure: function () {  
 			//dbg('ERROR XHR loading; 404?'); 
 			}
