@@ -82,7 +82,12 @@ def is_status_in_base(status_uid,status_text,status_date):
 #add profile to database
 def add_profile(email_,password_):
 	date = datetime.datetime(2001,1,1)
-	Profile(uid = 'one',name = 'unknown',password = password_,email = email_,cookie = 'empty',cookie_date = date).save()
+	try:
+		Profile.objects.get(email = email_)
+	except Profile.DoesNotExist:
+		Profile(uid = 'one',name = 'unknown',password = password_,email = email_,cookie = 'empty',cookie_date = date).save()
+		return True
+	return False
 
 
 #add contact to database

@@ -1,24 +1,10 @@
 General Information
 ===================
-This is vkstatuses python script. It allows you to parse newsfeed from the social network vkontakte.ru using your login information
+This is vkstatuses django project. It allows you to parse newsfeed from the social network vk.com using your login information, provides website template for displaying statuses and sending comments.
 
-Using download.py
-===================
-Just edit download.py with your email and password. Then type 
-
-	python download.py
-
-or put it in a file
-
-	python download.py > outfile.html
-
-and you are done.
-
-Using libstatuses.py
-===================
-This is small code to interact with database via Django models
-Import this library in your python code e.g.
-
-	import libstatuses
-
-IMORTANT:In order ot use it, you must have this script in the same directory as settings.py (or at simply link it to achieve the same result)
+How to run vkstatuses project
+=============================
+1. Run script start.sh and follow the instructions.
+2. Add to database your vk profile(s). Use the profiles.py (type python profiles.py --help for information about usage).
+3. Run script syncstatuses.py for populating database. To ensure regular parsing and adding statuses to database add syncstatuses.py script to Cron's list using crontab (type crontab -e).
+4. Run django project!
