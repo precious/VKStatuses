@@ -39,7 +39,8 @@ def sync_statuses():
 		u_news = unicode(news_page,encoding)
 
 		statuses_list = pars_all(u_news)
-
+		if not statuses_list:
+			return None
 		for status in statuses_list[::-1]:
 			if not libstatuses.is_contact_in_base(status.uid):
 				libstatuses.add_contact(status.uid,status.name)
@@ -51,26 +52,32 @@ def pars_all(page):
 	initial_date = 0
 	statuses = []
 	date = get_between(page,0,'<div class="feedDay">','</div>')
-	while 1:
+	iterations_counter = 0
+	while iterations_counter < 55:
+		iterations_counter += 1
 		if page.find('<div class="feedDay">',initial_date) == -1:
 			break
 		if initial_date != 0:
 			date = get_between(page,initial_date - len('<div class="feedDay">') - 2,'<div class="feedDay">','</div>')
+		if not date:
+			return None
 		fragment = get_between(page,initial_date,'<div class="feedDay">','<div class="feedDay">')
 		if fragment == None:
 			fragment = page[page.find('<div class="feedDay">',initial_date):]
 			try:
 				statuses.extend(pars_fragment(fragment,date));
 			except TypeError:
-				break
+				return None
 			break
 		try:
 			statuses.extend(pars_fragment(fragment,date));
 		except TypeError:
-			continue
+			return None
 		
 		#searching in the next iteration will be start from the character with number:
 		initial_date = page.find('<div class="feedDay">',page.find('<div class="feedDay">',initial_date) + 1)
+	if iterations_counter == 55:
+		return None
 	return statuses
 
 
@@ -116,7 +123,9 @@ def pars_fragment(fragment,date):
 	day = date_match.group('day')
 	year = date_match.group('year')
 	statuses = []
-	while 1:
+	iterations_counter = 0
+	while iterations_counter < 55:
+		iterations_counter += 1
 		uid, name, status, time = pars_status(fragment, initial)
 		if name == '' or uid == '':
 			break			
@@ -132,4 +141,7 @@ def pars_fragment(fragment,date):
 			statuses.append(TempStatus(uid,status,date_time,name))
 		#searching in the next iteration will be start from the character with number:
 		initial = fragment.find('<td class="feedStory">',fragment.find('<td class="feedStory">',initial) + 1)
+	if iterations_counter == 55:
+		return None
 	return statuses
+	

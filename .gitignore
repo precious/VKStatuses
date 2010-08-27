@@ -5,3 +5,4 @@ rpk082/what.html
 *.sqlite
 rpk082/robot/libstatuses.py
 rpk082/profiles
+*_old

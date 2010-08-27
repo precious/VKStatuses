@@ -20,6 +20,7 @@ import datetime
 import urllib
 import urllib2
 from get_between import get_between
+import re
 
 
 ####### API go here
@@ -92,7 +93,10 @@ def add_profile(email_,password_):
 
 #add contact to database
 def add_contact(Uid,Name):
-	contact = Contact(uid=Uid, name=Name)
+	name_ = get_full_name(Uid)
+	if not name_:
+		name_ = Name
+	contact = Contact(uid = Uid, name = name_)
 	contact.save()
 	return contact.uid
 
@@ -161,7 +165,26 @@ def get_veified_cookie(profile):
 			profile.cookie = new_cookie
 			profile.cookie_date = now
 			profile.save()
-	return profile.cookie;
+	return profile.cookie
+	
+	
+def get_full_name(uid):
+	cookie = 'remixchk=5; remixlang=3; remixnews_privacy_filter_idols=0; remixgroup_closed_tabs=0; remixsid=nonenone'
+	user_agent = 'User-Agent: Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.8) Gecko/20100722 Firefox/3.6.8'
+	headers = {'User-Agent': user_agent,'Cookie': cookie}
+	url = 'http://vk.com/' + uid
+	req = urllib2.Request(url, None, headers)
+	try:
+		response = urllib2.urlopen(req)
+	except urllib2.HTTPError:
+		return ''
+	page = response.read()
+	re_name = re.compile(r'<title>VK \| (?P<full_name>.+?)</title>',re.I|re.DOTALL)
+	re_match = re_name.search(page)
+	if re_match:
+		return re_match.group('full_name')
+	else:
+		return ''
 
 
 
