@@ -11,6 +11,5 @@ urlpatterns = patterns('',
 	(r'^status_(?P<stat_id>\d+)/$', 'rpk082.robot.views.status'),
 	(r'^send_comment/$', 'rpk082.robot.views.send_comment'),
 	
-	#(r'^last_commented/$', 'rpk082.robot.views.last_commented'),
-	
+	(r'^statistics/$','rpk082.robot.views.statistic_charts'),
 )

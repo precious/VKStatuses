@@ -106,8 +106,7 @@ def pars_status(page, initial):
 
 def pars_fragment(fragment,date):
 	initial = 0
-	
-	date_regexp = re.compile(r"(?P<month>[A-z][a-z]+) (?P<day>\d{2}), (?P<year>\d{4})")
+	date_regexp = re.compile(r"(?P<month>[A-z][a-z]+) (?P<day>\d{1,2}), (?P<year>\d{4})")
 	date_match = date_regexp.search(date)
 	if date_match == None:
 		print 'invalid date format'

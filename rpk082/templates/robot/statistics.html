@@ -1,0 +1,22 @@
+{% extends "robot/vkstatuses.html" %}
+
+{% block title %}VKStatuses statistics{% endblock %}
+
+{% block includes %}
+
+{% endblock %}
+
+
+{% block header %}
+
+{% endblock %}
+
+
+{% block body %}
+<h1>Statuses for all time</h1>
+	{% if img_all %}
+		<img src="/all.png">
+	{% else %}
+		infernal server error
+	{%endif%}
+{% endblock %}

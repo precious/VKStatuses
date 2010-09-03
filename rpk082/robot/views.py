@@ -11,6 +11,7 @@ import re
 from django import template
 import datetime
 import time
+import statistics
 
 
 def is_mobile_browser(request):
@@ -112,3 +113,30 @@ def last_commented(request,records = '30'):
 		except Status.DoesNotExist:
 			continue
 	return render_to_response ('robot/xhr/statuses.html', {'last_statuses': last_statuses})
+	
+	
+def statistic_charts(request):
+	oldest_status = Status.objects.all().order_by('date')[1]
+	oldest_date = datetime.datetime(oldest_status.date.year,oldest_status.date.month,oldest_status.date.day)
+	day_delta = datetime.timedelta(1)
+	tomorrow = datetime.datetime.now() + day_delta
+	values = []
+	if datetime.datetime.now() < oldest_date:
+		return Http404()
+	iterations_counter = 0
+	value = 0
+	while not (oldest_date.year == tomorrow.year and oldest_date.month == tomorrow.month and oldest_date.day == tomorrow.day):
+		iterations_counter += 1
+		if iterations_counter > 1000:
+			break
+		value = len(Status.objects.all().filter(date__year = oldest_date.year,date__month = oldest_date.month,date__day = oldest_date.day))
+		values.append({'name':str(oldest_date.day) + '. ' + str(oldest_date.month),'value': value})
+		now = datetime.datetime(2010,9,1)
+		oldest_date += day_delta
+	
+	try:
+		chart = statistics.chart(values,800,400,10,'all.png')
+	except IOError:
+		chart = ''
+	return render_to_response('robot/statistics.html',{'img_all':chart})
+
