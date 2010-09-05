@@ -19,4 +19,16 @@
 	{% else %}
 		infernal server error
 	{%endif%}
+<h1>Most active</h1>
+	{% if most_active %}
+	<table>
+	{% for contact in most_active %}
+		<tr>
+		<td>{{ forloop.counter }}.&nbsp;</td>
+		<td>{{ contact.name|safe }}</td>
+		<td width="40" align="right">{{ contact.number_of_statuses }}</td>
+		</tr>
+	{% endfor %}
+	</table>
+	{% endif %}
 {% endblock %}

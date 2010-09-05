@@ -136,9 +136,9 @@ def get_status(stat_id):
 
 
 #get contact from database by id
-def get_contact(cont):
+def get_contact(cont_id):
 	try:
-		contact = Contact.objects.get(id = cont.id)
+		contact = Contact.objects.get(id = cont_id)
 	except Contact.DoesNotExist:
 		contact = None
 	return contact
@@ -149,6 +149,14 @@ def get_number_of_comments(stat_id):
 	stat = get_status(stat_id)
 	if stat:
 		return len(Comment.objects.filter(status = stat))
+	else:
+		return 0
+
+
+def get_number_of_statuses(cont_id):
+	cont = get_contact(cont_id)
+	if cont:
+		return len(Status.objects.filter(contact = cont))
 	else:
 		return 0
 		

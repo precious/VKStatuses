@@ -39,13 +39,16 @@ def sync_statuses():
 		u_news = unicode(news_page,encoding)
 
 		statuses_list = pars_all(u_news)
+		
 		if not statuses_list:
+			print 'failed statuses_list for cookie ' + currnet_cookie[:45] + '*****'
 			return None
 		for status in statuses_list[::-1]:
 			if not libstatuses.is_contact_in_base(status.uid):
 				libstatuses.add_contact(status.uid,status.name)
 			if not libstatuses.is_status_in_base(status.uid,status.status,status.date):
 				libstatuses.add_status(status.uid,status.status,status.date)
+	return True
 
 
 def pars_all(page):
@@ -60,6 +63,7 @@ def pars_all(page):
 		if initial_date != 0:
 			date = get_between(page,initial_date - len('<div class="feedDay">') - 2,'<div class="feedDay">','</div>')
 		if not date:
+			print 'can\'t pars date [pars_all function]'
 			return None
 		fragment = get_between(page,initial_date,'<div class="feedDay">','<div class="feedDay">')
 		if fragment == None:
@@ -67,16 +71,19 @@ def pars_all(page):
 			try:
 				statuses.extend(pars_fragment(fragment,date));
 			except TypeError:
+				print 'pars_fragment returns invalid value [pars_all function]'
 				return None
 			break
 		try:
 			statuses.extend(pars_fragment(fragment,date));
 		except TypeError:
+			print 'pars_fragment returns invalid value [pars_all function]'
 			return None
 		
 		#searching in the next iteration will be start from the character with number:
 		initial_date = page.find('<div class="feedDay">',page.find('<div class="feedDay">',initial_date) + 1)
 	if iterations_counter == 55:
+		print 'pars error [pars_all function]'
 		return None
 	return statuses
 
@@ -89,7 +96,7 @@ def pars_status(page, initial):
 	string_regexp = re.compile(r'href="/(?P<uid>.+?)">(?P<name>.+?)</a>(?P<status_with_whitespaces>.*?)(<div|$)',re.DOTALL)
 	string_match = string_regexp.search(string)
 	if string_match == None:
-		print 'invalid status format'
+		print 'invalid status format [pars_status function]'
 		return '0','0','0','0'
 	
 	uid = string_match.group('uid')
@@ -109,14 +116,14 @@ def pars_fragment(fragment,date):
 	date_regexp = re.compile(r"(?P<month>[A-z][a-z]+) (?P<day>\d{1,2}), (?P<year>\d{4})")
 	date_match = date_regexp.search(date)
 	if date_match == None:
-		print 'invalid date format'
+		print 'invalid date format [pars_fragment function]'
 		return None
 	
 	monthes = ['January','February','March','April','May','June','July','August','September','October','November','December']
 	try:
 		month = monthes.index(date_match.group('month')) + 1
 	except ValueError:
-		print 'invalid date format [unknown month]'
+		print 'invalid date format [unknown month] [pars_fragment function]'
 		return None
 	
 	day = date_match.group('day')
@@ -141,6 +148,7 @@ def pars_fragment(fragment,date):
 		#searching in the next iteration will be start from the character with number:
 		initial = fragment.find('<td class="feedStory">',fragment.find('<td class="feedStory">',initial) + 1)
 	if iterations_counter == 55:
+		print 'unknown error [pars_fragment function]'
 		return None
 	return statuses
 	

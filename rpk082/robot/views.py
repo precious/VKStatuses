@@ -67,7 +67,7 @@ def status(request,stat_id,msg = ''):
 	if stat == None:
 		return HttpResponse("404")
 	comments = libstatuses.get_comments(stat)
-	contact = libstatuses.get_contact(stat.contact)
+	contact = libstatuses.get_contact(stat.contact.id)
 	
 	re_img = re.compile(r'\[img\](.*?)\[\/img\]',re.I | re.S)
 	re_url = re.compile(r'\[url=(.*?)\](.*?)\[\/url\]',re.I | re.S)
@@ -138,5 +138,14 @@ def statistic_charts(request):
 		chart = statistics.chart(values,800,400,10,'all.png')
 	except IOError:
 		chart = ''
-	return render_to_response('robot/statistics.html',{'img_all':chart})
+	
+
+	contacts = Contact.objects.all()
+	for contact in contacts:
+		contact.number_of_statuses = libstatuses.get_number_of_statuses(contact.id)
+	contacts = list(contacts)
+	contacts.sort(lambda cont1, cont2: cont2.number_of_statuses - cont1.number_of_statuses)
+	contacts = contacts[:15]
+
+	return render_to_response('robot/statistics.html',{'img_all':chart,'most_active':contacts})
 
