@@ -187,8 +187,10 @@ def get_full_name(uid):
 	except urllib2.HTTPError:
 		return ''
 	page = response.read()
+	encoding = response.headers['content-type'].split('charset=')[-1]
+	u_page = unicode(page,encoding)
 	re_name = re.compile(r'<title>VK \| (?P<full_name>.+?)</title>',re.I|re.DOTALL)
-	re_match = re_name.search(page)
+	re_match = re_name.search(u_page)
 	if re_match:
 		return re_match.group('full_name')
 	else:
