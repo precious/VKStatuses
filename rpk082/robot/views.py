@@ -14,6 +14,10 @@ import time
 import statistics
 
 
+def task(request):
+	return render_to_response('robot/vkstatuses_task.html')
+
+
 def is_mobile_browser(request):
 	try:
 		user_agent = request.META['HTTP_USER_AGENT']

@@ -79,4 +79,5 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.admin',
     'rpk082.robot',
+    'rpk082.exercise',
 )

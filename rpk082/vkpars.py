@@ -42,7 +42,7 @@ def sync_statuses():
 		
 		if not statuses_list:
 			print 'failed statuses_list for cookie ' + currnet_cookie[:45] + '*****'
-			return None
+			continue
 		for status in statuses_list[::-1]:
 			if not libstatuses.is_contact_in_base(status.uid):
 				libstatuses.add_contact(status.uid,status.name)
