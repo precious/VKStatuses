@@ -1,0 +1,51 @@
+<!--﻿<!DOCTYPE html>-->
+<!--<html xmlns="http://www.w3.org/1999/xhtml">-->
+<!--<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">-->
+<!--<html xmlns="http://www.w3.org/1999/xhtml">-->
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>{% block title %}VKStatuses{% endblock %}</title>
+	{% block includes %}{% endblock %}
+	<style type="text/css">
+		.menu-link
+		{
+			border: 2px solid;
+			padding: 2px;
+			margin: 2px;
+		}
+		
+		.footer
+		{
+			width: 100%;
+			background-color: #ddd;
+			text-align: center;
+			position: inherit;
+			bottom: 8px;
+			right: 0px;
+		}
+	</style>
+</head>
+
+<body>
+{% if user.is_authenticated %}
+	<span style="position: absolute; right: 50;">
+		<a href="/exercise/" class="menu-link">my page [{{ user.username }}]</a>
+		<a href="/exercise/all?group_by=user" class="menu-link">all users (group by user)</a>
+		<a href="/exercise/all?group_by=date" class="menu-link">all users (group by date)</a>
+		<a href="/exercise/logout/" class="menu-link">logout</a>
+	</span>
+{% endif %}
+
+
+
+{% block header %}{% endblock %}
+
+{% block body %}{% endblock %}
+
+<div class="footer">
+	<a href="https://github.com/precious/VKStatuses">Sources on the GitHub</a>
+</div>
+</body>
+
+</html>

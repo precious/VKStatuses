@@ -1,0 +1,44 @@
+{% extends "exercise/base.html" %}
+
+{% block title %}{{ username }} exercises statistics{% endblock %}
+
+{% block includes %}
+{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block body %}
+	<form method="post" action="/exercise/add/">
+		<table>
+		{% for exercise in exercises %}
+			<tr>
+				<td>{{ exercise.name }}:</td>
+				<td><input name="{{ exercise.name }}" type="text"></td>
+			</tr>
+		{% endfor %}
+		</table>
+		<input type="reset" value="Reset">
+		<input type="submit" value="Submit">
+	</form>
+	
+	
+	{% for date in dates %}
+		<b>{{ date.date }}</b>
+		{% if date.exercises %}
+		
+			<table>
+			{% for exercise in date.exercises %}
+				<tr>
+					<td>{{ exercise.name }}</td>
+					<td><b>{{ exercise.count }}</b></tr>
+				</td>
+			{% endfor %}
+			</table>
+		{% else %}
+			<br>nothing <b>o_O</b><br>
+		{% endif %}
+		<br>
+	{% endfor %}
+{% endblock %}
+

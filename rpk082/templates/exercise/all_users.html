@@ -1,0 +1,52 @@
+{% extends "exercise/base.html" %}
+
+{% block title %}All users exercises statistics{% endblock %}
+
+{% block includes %}
+{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block body %}
+		
+	{% ifequal group_by "user" %}
+		{% for user in users %}
+		{% ifnotequal user.username "admin" %}
+			<h2>{{ user.username }}</h2>
+			<table>
+				{% for date in user.dates %}
+					<tr><td><b>{{ date.date }}</b></td></tr>
+					{% for exercise in date.exercises %}
+						<tr>
+						  <td>&nbsp;&nbsp;&nbsp;{{ exercise.name }}</td>
+						  <td><b>&nbsp;{{ exercise.count }}</b></td>
+						</tr>
+					{% endfor %}
+				{% endfor %}
+			</table><br><br>
+		{% endifnotequal %}
+		{% endfor %}
+	{% endifequal %}
+
+	{% ifequal group_by "date" %}
+		{% for date in dates %}
+			<h2>{{ date.date }}</h2>
+			{% for user in date.users %}
+			{% ifnotequal user.username "admin" %}
+				<table>
+				<tr><td><b>{{ user.username }}</b></td></tr>
+				{% for exercise in user.exercises %}
+					<tr>
+					  <td>&nbsp;&nbsp;&nbsp;{{ exercise.name }}</td>
+					  <td><b>&nbsp;{{ exercise.count }}</b></td>
+					</tr>
+				{% endfor %}
+				</table><br>
+			{% endifnotequal %}
+			{% endfor %}
+	{% endfor %}
+	{% endifequal %}
+	
+{% endblock %}
+
