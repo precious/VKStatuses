@@ -9,7 +9,7 @@ class Exercise(models.Model):
 		return self.name
 	
 class DayExercise(models.Model):
-	date = models.DateField(auto_now_add = True)
+	date = models.DateTimeField(auto_now_add = True)
 	count = models.IntegerField()
 	name = models.ForeignKey(Exercise)
 	username = models.ForeignKey(User)

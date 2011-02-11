@@ -3,6 +3,25 @@
 {% block title %}{{ username }} exercises statistics{% endblock %}
 
 {% block includes %}
+<style type="text/css">
+	.time
+	{
+		font-size: 8pt;
+		color: #999;
+		
+	}
+	
+	.name
+	{
+		padding-left: 30px;
+	}
+	
+	.count
+	{
+		padding-left: 5px;
+		font-weight: bold;
+	}
+</style>
 {% endblock %}
 
 {% block header %}
@@ -24,15 +43,16 @@
 	
 	
 	{% for date in dates %}
-		<b>{{ date.date }}</b>
+		<b>{{ date.date|date:"j F Y" }}</b>
 		{% if date.exercises %}
 		
 			<table>
 			{% for exercise in date.exercises %}
 				<tr>
-					<td>{{ exercise.name }}</td>
-					<td><b>{{ exercise.count }}</b></tr>
-				</td>
+				  <td class="name">{{ exercise.name }}</td>
+				  <td class="count">{{ exercise.count }}</td>
+				  <td class="time">{{ exercise.date|date:"G:i" }}</td>
+				</tr>
 			{% endfor %}
 			</table>
 		{% else %}

@@ -3,6 +3,25 @@
 {% block title %}All users exercises statistics{% endblock %}
 
 {% block includes %}
+<style type="text/css">
+	.time
+	{
+		font-size: 8pt;
+		color: #999;
+		
+	}
+	
+	.name
+	{
+		padding-left: 30px;
+	}
+	
+	.count
+	{
+		padding-left: 5px;
+		font-weight: bold;
+	}
+</style>
 {% endblock %}
 
 {% block header %}
@@ -16,11 +35,12 @@
 			<h2>{{ user.username }}</h2>
 			<table>
 				{% for date in user.dates %}
-					<tr><td><b>{{ date.date }}</b></td></tr>
+					<tr><td><b>{{ date.date|date:"j F Y" }}</b></td></tr>
 					{% for exercise in date.exercises %}
 						<tr>
-						  <td>&nbsp;&nbsp;&nbsp;{{ exercise.name }}</td>
-						  <td><b>&nbsp;{{ exercise.count }}</b></td>
+						  <td class="name">{{ exercise.name }}</td>
+						  <td class="count">{{ exercise.count }}</td>
+						  <td class="time">{{ exercise.date|date:"G:i" }}</td>
 						</tr>
 					{% endfor %}
 				{% endfor %}
@@ -29,17 +49,19 @@
 		{% endfor %}
 	{% endifequal %}
 
+
 	{% ifequal group_by "date" %}
 		{% for date in dates %}
-			<h2>{{ date.date }}</h2>
+			<h2>{{ date.date|date:"j F Y" }}</h2>
 			{% for user in date.users %}
 			{% ifnotequal user.username "admin" %}
 				<table>
 				<tr><td><b>{{ user.username }}</b></td></tr>
 				{% for exercise in user.exercises %}
 					<tr>
-					  <td>&nbsp;&nbsp;&nbsp;{{ exercise.name }}</td>
-					  <td><b>&nbsp;{{ exercise.count }}</b></td>
+					  <td class="name">{{ exercise.name }}</td>
+					  <td class="count">{{ exercise.count }}</td>
+					  <td class="time">{{ exercise.date|date:"G:i" }}</td>
 					</tr>
 				{% endfor %}
 				</table><br>
