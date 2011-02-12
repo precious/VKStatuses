@@ -5,7 +5,7 @@ from django.contrib import auth
 from django.shortcuts import render_to_response
 from rpk082.exercise.models import Exercise
 from rpk082.exercise.models import DayExercise
-from datetime import datetime
+from datetime import datetime, date, time
 from datetime import timedelta
 from django.contrib.auth.models import User
 
@@ -64,7 +64,8 @@ def home_page(request):
 								{"username": request.user.username,
 								"exercises": Exercise.objects.all(),
 								"dates": get_user_exercises(request.user,datetime.now() - timedelta(days_number),datetime.now()),
-								"user": request.user})
+								"user": request.user,
+								"today": datetime.combine(date.today(),time(0))})
 
 
 @check_login
@@ -79,7 +80,23 @@ def add(request):
 			day_exe = DayExercise(date = datetime.now(),name = exercise,count = count,username = request.user)
 			day_exe.save()
 	return redirect('/' + root_url + '/')
-	
+
+
+@check_login
+def remove(request):
+	if "uid" in request.GET:
+		try:
+			exe = DayExercise.objects.get(id = int(request.GET["uid"]))
+			if request.user == exe.username:
+				exe.delete()
+				return HttpResponse("exercise record successfully deleted")
+			else:
+				return HttpResponse("you don't have permission to do this operation")
+		except DayExercise.DoesNotExist:
+			return HttpResponse("exercise record doesn't exists")
+	else:
+		return HttpResponse("failed request")
+
 
 @check_login
 def all_users(request):

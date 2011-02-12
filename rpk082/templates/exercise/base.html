@@ -1,7 +1,4 @@
-<!--﻿<!DOCTYPE html>-->
-<!--<html xmlns="http://www.w3.org/1999/xhtml">-->
-<!--<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">-->
-<!--<html xmlns="http://www.w3.org/1999/xhtml">-->
+<!doctype html>
 <html>
 <head>
 	<meta charset="utf-8">
@@ -29,7 +26,7 @@
 
 <body>
 {% if user.is_authenticated %}
-	<span style="position: absolute; right: 50;">
+	<span style="position: absolute; right: 10px;">
 		<a href="/exercise/" class="menu-link">my page [{{ user.username }}]</a>
 		<a href="/exercise/all?group_by=user" class="menu-link">all users (group by user)</a>
 		<a href="/exercise/all?group_by=date" class="menu-link">all users (group by date)</a>

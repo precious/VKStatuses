@@ -13,7 +13,9 @@
 	
 	.name
 	{
-		padding-left: 30px;
+		//padding-rigth: 30px;
+		display: inline-block;
+		width: 130px;
 	}
 	
 	.count
@@ -21,7 +23,67 @@
 		padding-left: 5px;
 		font-weight: bold;
 	}
+	
+	.remove
+	{	
+		margin-top: 2px;
+		width: 16px;
+		height: 16px;
+		border: 1px solid #fff;
+		-moz-border-radius: 3px;
+		border-radius: 3px;
+		text-align: center;
+		vertical-align: middle;
+		//display: inline;
+		float: left;
+	}
+	
+	.remove:hover
+	{
+		border: 1px solid #666;
+		background: #eee;
+	}
+	
+	.remove:active
+	{
+		border: 1px solid #666;
+		background: #aaa;
+	}
+	
+	.exercise
+	{
+		margin-top: 2px;
+		margin-bottom: 2px;
+	}
+	
+	.date
+	{
+		margin-bottom: 20px;
+	}
 </style>
+
+<script type="text/javascript">
+	function remove(id,elem)
+	{
+		var req = new XMLHttpRequest();
+		var params = "?uid=" + id;
+		console.log(elem.parentNode.parentNode);
+		date_div = elem.parentNode.parentNode;
+		
+		req.onreadystatechange = function()
+		{
+			if (req.readyState == 4 && req.status == 200)
+			{
+				elem.parentNode.parentNode.removeChild(elem.parentNode);
+				if (date_div.getElementsByTagName("div").length == 0)
+					date_div.textContent = "nothing o_O";
+			}
+		}
+		
+		req.open('GET', '/exercise/remove/' + params, true);
+		req.send(null);	
+	}
+</script>
 {% endblock %}
 
 {% block header %}
@@ -44,21 +106,26 @@
 	
 	{% for date in dates %}
 		<b>{{ date.date|date:"j F Y" }}</b>
+		<div class="date">
 		{% if date.exercises %}
-		
-			<table>
+
 			{% for exercise in date.exercises %}
-				<tr>
-				  <td class="name">{{ exercise.name }}</td>
-				  <td class="count">{{ exercise.count }}</td>
-				  <td class="time">{{ exercise.date|date:"G:i" }}</td>
-				</tr>
+
+				<div class="exercise">
+				{% if exercise.date >= today %}
+				  <div class="remove" onclick="remove({{ exercise.id }},this)"> <img src="http://127.0.0.1/res/default/img/icons/remove.png"></div>
+				{% endif %}
+				  <span class="name">{{ exercise.name }}</span>
+				  <span class="count">{{ exercise.count }}</span>
+				  <span class="time">{{ exercise.date|date:"G:i" }}</span>
+				</div>
+				
 			{% endfor %}
-			</table>
+
 		{% else %}
-			<br>nothing <b>o_O</b><br>
+			nothing o_O
 		{% endif %}
-		<br>
+		</div>
 	{% endfor %}
 {% endblock %}
 
